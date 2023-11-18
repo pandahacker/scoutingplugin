@@ -16,6 +16,12 @@ public class EventData implements Comparable {
 
     private static Logger logger = LoggerFactory.getLogger(EventData.class);
 
+    // Note: These thresholds are a bit conservative since we can always further dedupe events down the line.
+    // Any events within X tiles of one another may be considered the same event
+    public static int EVENT_DEDUPE_DISTANCE = 20;
+    // Any events within X seconds of one another may be considered the same event
+    public static int EVENT_DEDUPE_DURATION = 180;
+
     @Getter
     @SerializedName("event_type")
     private String eventType;
@@ -62,6 +68,7 @@ public class EventData implements Comparable {
     }
 
     @Override
+    // uses discovered_time for sequential ordering
     public int compareTo(Object o) {
         if (!(o instanceof EventData))
             return -1;
@@ -86,15 +93,19 @@ public class EventData implements Comparable {
         if (!Objects.equals(this.custom, other.custom))
             return false;
 
-        // We are dealing with an NPC
-        if (this.npcIndex != null && other.npcIndex != null)
-            return this.npcIndex.equals(other.npcIndex);
+        // At this point, we know that two events of the same type are in the same world/plane. For now, assume that any
+        // events within X tiles of one another are the same event. Even if this isn't completely accurate,
+        // people will go to one of the locations and see both events, so it's fine.
+        if (Math.abs(this.xcoord - other.xcoord) > EVENT_DEDUPE_DISTANCE) {
+            return false;
+        }
+        if (Math.abs(this.ycoord - other.ycoord) > EVENT_DEDUPE_DISTANCE) {
+            return false;
+        }
 
-        // We are dealing with a game object, not NPC, so use their position since it's fixed
-        if (this.xcoord != other.xcoord)
+        if (Math.abs(this.discovered_time.getEpochSecond() - other.discovered_time.getEpochSecond()) > EVENT_DEDUPE_DURATION) {
             return false;
-        if (this.ycoord != other.ycoord)
-            return false;
+        }
 
         return true;
     }
