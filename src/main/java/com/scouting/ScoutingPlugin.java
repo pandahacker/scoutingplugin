@@ -43,7 +43,7 @@ public class ScoutingPlugin extends Plugin
 			"https://g98c6e9efd32fb1-scouting.adb.us-ashburn-1.oraclecloudapps.com/ords/scouting/calls/";
 
 	// Every X seconds, upload any events found since the last check
-	private static final int UPLOAD_INTERVAL_SECONDS = 5;
+	private static final int UPLOAD_INTERVAL_SECONDS = 3;
 
 	List<EventData> recentEvents = new ArrayList<>();
 
