@@ -15,8 +15,6 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.task.Schedule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @PluginDescriptor(
-	name = "ScoutingPlugin"
+	name = "Scouting"
 )
 public class ScoutingPlugin extends Plugin
 {
@@ -41,48 +39,33 @@ public class ScoutingPlugin extends Plugin
 	@Getter(AccessLevel.PACKAGE)
 	private List<EventData> eventsToUpload = new ArrayList<>();
 
-	private Logger logger;
-
 	protected static String postEventsEndpoint =
 			"https://g98c6e9efd32fb1-scouting.adb.us-ashburn-1.oraclecloudapps.com/ords/scouting/calls/";
 
 	// Every X seconds, upload any events found since the last check
 	private static final int UPLOAD_INTERVAL_SECONDS = 5;
-	// remove any stale events since NPC indexes are eventually recycled
-	// 1800 sec = 0.5 hour
-	private static final int MAX_EVENT_STALENESS_SECONDS = 1800;
 
 	List<EventData> recentEvents = new ArrayList<>();
-
-	@Override
-	protected void startUp() throws Exception
-	{
-		logger = LoggerFactory.getLogger(ScoutingPlugin.class);
-	}
 
 	@Subscribe
 	public void onNpcSpawned(NpcSpawned npcSpawned) {
 		final NPC npc = npcSpawned.getNpc();
 
-		final int npcId = SupportedEventsEnum.getIdByNameFuzzy(npc.getName());
-		if (npcId == -1)
+		SupportedEventsEnum eventType = SupportedEventsEnum.findByNpcId(npc.getId());
+		if (eventType == null) {
+			// event not found for this NPC
 			return;
-
-		SupportedEventsEnum eventType = SupportedEventsEnum.findById(npcId);
+		}
 
 		if (!clientOptedIntoEventType(eventType))
 			return;
 
-		// TODO: delete before uploading
-		System.out.println("Found event: " + eventType.getName());
 		EventData event = makeEvent(eventType, npc.getWorldArea(), npc.getIndex());
 
-		logger.debug(event.toString());
-
-		// remove any stale events since NPC indexes are eventually recycled
-		recentEvents.removeIf(e -> Math.abs(e.getDiscovered_time().getEpochSecond() - Instant.now().getEpochSecond()) > MAX_EVENT_STALENESS_SECONDS);
-
-		// only attempt to upload the event if it has not been added this session
+		// remove any stale events, since events older than the dedupe duration could never match any new events anyway.
+		recentEvents.removeIf(e -> Math.abs(e.getDiscovered_time().getEpochSecond() - Instant.now().getEpochSecond())
+				> EventData.EVENT_DEDUPE_DURATION);
+		// only attempt to upload the event if it has not already been seen
 		if (!recentEvents.contains(event)) {
 			eventsToUpload.add(event);
 			recentEvents.add(event);
@@ -93,7 +76,7 @@ public class ScoutingPlugin extends Plugin
 		int world = client.getWorld();
 		WorldPoint point = eventLocation.toWorldPoint();
 		return EventData.builder()
-				.eventType(eventType.getName())
+				.eventType(eventType.name())
 				.world(world)
 				.xcoord(point.getX())
 				.ycoord(point.getY())
@@ -104,13 +87,25 @@ public class ScoutingPlugin extends Plugin
 				.build();
 	}
 
+	// Only send events if the client is interested in contributing to scouting this event type
 	private boolean clientOptedIntoEventType(SupportedEventsEnum eventType) {
-		if (eventType == SupportedEventsEnum.ENT_12543) {
+		if (eventType == SupportedEventsEnum.ENT) {
 			return config.entEnabled();
 		}
+		if (eventType == SupportedEventsEnum.FOX) {
+			return config.foxEnabled();
+		}
+		if (eventType == SupportedEventsEnum.PHEASANT) {
+			return config.pheasantEnabled();
+		}
+		if (eventType == SupportedEventsEnum.BEEHIVE) {
+			return config.beehiveEnabled();
+		}
+		if (eventType == SupportedEventsEnum.RITUAL) {
+			return config.ritualEnabled();
+		}
 
-		// TODO: set this to false before release
-		return true;
+		return false;
 	}
 
 	@Schedule(

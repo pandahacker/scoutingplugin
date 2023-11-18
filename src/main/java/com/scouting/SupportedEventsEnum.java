@@ -3,6 +3,8 @@ package com.scouting;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.runelite.api.NpcID;
+import net.runelite.api.ObjectID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,45 +13,62 @@ import java.util.Map;
 @AllArgsConstructor
 public enum SupportedEventsEnum {
 
-    // TODO: remove
-//    MAN_3106(3106, "Man"),
-//    MAN_3107(3107, "Man"),
-    ENT_12543(12543, "Entling");
-    // TODO: ritual, fox, pheasant
+    ENT,
+    FOX,
+    PHEASANT,
+    BEEHIVE,
+    RITUAL;
 
-    private int npcId;
-    private String name;
-
-    private static final Map<Integer, SupportedEventsEnum> map;
+    private static final Map<Integer, SupportedEventsEnum> npcIdToEventMap;
     static {
-        map = new HashMap<>();
-        for (SupportedEventsEnum e : SupportedEventsEnum.values())  {
-            map.put(e.npcId, e);
-        }
+        npcIdToEventMap = new HashMap<>();
+
+        // Omitting PRUNED_ENTLING_12544 because it only signals the end of an event
+        npcIdToEventMap.put(NpcID.ENTLING, ENT);
+
+        npcIdToEventMap.put(NpcID.FOX_TRAP, FOX);
+        npcIdToEventMap.put(NpcID.POACHER, FOX);
+        npcIdToEventMap.put(NpcID.POACHER_12554, FOX);
+        npcIdToEventMap.put(NpcID.POACHER_12555, FOX);
+        npcIdToEventMap.put(NpcID.POACHER_12556, FOX);
+        npcIdToEventMap.put(NpcID.POACHER_12557, FOX);
+        npcIdToEventMap.put(NpcID.POACHER_12558, FOX);
+        npcIdToEventMap.put(NpcID.FRIGHTENED_FOX, FOX);
+        npcIdToEventMap.put(NpcID.FRIGHTENED_FOX_12560, FOX);
+
+        npcIdToEventMap.put(NpcID.FREAKY_FORESTER_12536, PHEASANT);
+        npcIdToEventMap.put(NpcID.PHEASANT_12537, PHEASANT);
+        npcIdToEventMap.put(NpcID.PHEASANT_12547, PHEASANT);
+        npcIdToEventMap.put(NpcID.PHEASANT_12549, PHEASANT);
+
+        // Omitting FRIENDLY_BEES which also spawn during flowering bush event
+        npcIdToEventMap.put(NpcID.BEE_KEEPER_12514, BEEHIVE);
+        npcIdToEventMap.put(NpcID.UNFINISHED_BEEHIVE, BEEHIVE);
+        npcIdToEventMap.put(NpcID.UNFINISHED_BEEHIVE_12516, BEEHIVE);
+        npcIdToEventMap.put(NpcID.COMPLETE_BEEHIVE, BEEHIVE);
+        npcIdToEventMap.put(NpcID.WILD_BEEHIVE, BEEHIVE);
+
+        npcIdToEventMap.put(NpcID.DRYAD_12519, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_GREEN, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_YELLOW, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_BLUE, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_RED, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_GREEN_12524, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_YELLOW_12525, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_BLUE_12526, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_RED_12527, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_GREEN_12528, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_YELLOW_12529, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_BLUE_12530, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_RED_12531, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_GREEN_12532, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_YELLOW_12533, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_BLUE_12534, RITUAL);
+        npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_RED_12535, RITUAL);
     }
 
-    public static SupportedEventsEnum findById(int id) {
-        return map.get(id);
+    public static SupportedEventsEnum findByNpcId(int npcId) {
+        return npcIdToEventMap.get(npcId);
     }
 
-    public static boolean hasIdByNameFuzzy(String name) {
-        return getIdByNameFuzzy(name) != -1;
-    }
-
-    public static int getIdByNameFuzzy(String name) {
-        String lowerName = name.toLowerCase();
-        for (SupportedEventsEnum event : values()) {
-            if (event.name.toLowerCase().contains(lowerName))
-                return event.npcId;
-        }
-        return -1;
-    }
-
-    public static int getIdByNameStrict(String name) {
-        for (SupportedEventsEnum event : values()) {
-            if (name.contains(event.name))
-                return event.npcId;
-        }
-        return -1;
-    }
 }
