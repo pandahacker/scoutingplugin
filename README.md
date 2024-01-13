@@ -1,4 +1,4 @@
-# Scouting Plugin
+# Event Scouting Plugin
 A RuneLite plugin for automatically scouting for various events as you encounter them. Events will be processed and
 posted to the Log Hunters discord (https://discord.gg/loghunters).
 

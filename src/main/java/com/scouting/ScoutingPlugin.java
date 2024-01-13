@@ -23,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Scouting"
+	name = "Event Scouting"
 )
 public class ScoutingPlugin extends Plugin
 {

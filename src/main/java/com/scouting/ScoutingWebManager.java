@@ -26,6 +26,9 @@ public class ScoutingWebManager {
     private ScoutingPlugin plugin;
 
     @Inject
+    private ScoutingConfig config;
+
+    @Inject
     private GsonBuilder gsonBuilder;
 
     private Logger logger = LoggerFactory.getLogger(ScoutingWebManager.class);
@@ -37,7 +40,7 @@ public class ScoutingWebManager {
             // at a time
             for (EventData eventData : plugin.getEventsToUpload()) {
                 Request r = new Request.Builder()
-                        .url(ScoutingPlugin.postEventsEndpoint)
+                        .url(config.postEventsEndpoint())
                         .addHeader(CONTENT_TYPE, CONTENT_TYPE_JSON)
                         .post(RequestBody.create(MEDIA_TYPE_JSON, getGson().toJson(eventData)))
                         .build();

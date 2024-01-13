@@ -36,10 +36,9 @@ public enum SupportedEventsEnum {
         npcIdToEventMap.put(NpcID.FRIGHTENED_FOX, FOX);
         npcIdToEventMap.put(NpcID.FRIGHTENED_FOX_12560, FOX);
 
+        // PHEASANT_12547 and PHEASANT_12549 are pets, not events!
         npcIdToEventMap.put(NpcID.FREAKY_FORESTER_12536, PHEASANT);
         npcIdToEventMap.put(NpcID.PHEASANT_12537, PHEASANT);
-        npcIdToEventMap.put(NpcID.PHEASANT_12547, PHEASANT);
-        npcIdToEventMap.put(NpcID.PHEASANT_12549, PHEASANT);
 
         // Omitting FRIENDLY_BEES which also spawn during flowering bush event
         npcIdToEventMap.put(NpcID.BEE_KEEPER_12514, BEEHIVE);
