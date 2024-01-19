@@ -47,6 +47,10 @@ public class EventData implements Comparable {
     private Instant discovered_time;
 
     @Getter
+    @SerializedName("npc_id")
+    private Integer npcId;
+
+    @Getter
     @SerializedName("npc_index")
     private Integer npcIndex;
 
@@ -64,7 +68,7 @@ public class EventData implements Comparable {
     @Override
     public String toString() {
         return eventType + "  " + world + "  " + xcoord + "  " + ycoord + "  " + plane + "  " + discovered_time.toString() + "  "
-                + npcIndex + "  " + custom;
+                + npcId + "  " + npcIndex + "  " + custom;
     }
 
     @Override

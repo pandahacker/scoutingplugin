@@ -60,7 +60,7 @@ public class ScoutingPlugin extends Plugin
 		if (!clientOptedIntoEventType(eventType))
 			return;
 
-		EventData event = makeEvent(eventType, npc.getWorldArea(), npc.getIndex());
+		EventData event = makeEvent(eventType, npc.getWorldArea(), npc.getId(), npc.getIndex());
 
 		// remove any stale events, since events older than the dedupe duration could never match any new events anyway.
 		recentEvents.removeIf(e -> Math.abs(e.getDiscovered_time().getEpochSecond() - Instant.now().getEpochSecond())
@@ -72,7 +72,7 @@ public class ScoutingPlugin extends Plugin
 		}
 	}
 
-	private EventData makeEvent(SupportedEventsEnum eventType, WorldArea eventLocation, Integer npcIndex) {
+	private EventData makeEvent(SupportedEventsEnum eventType, WorldArea eventLocation, Integer npcId, Integer npcIndex) {
 		int world = client.getWorld();
 		WorldPoint point = eventLocation.toWorldPoint();
 		return EventData.builder()
@@ -82,6 +82,7 @@ public class ScoutingPlugin extends Plugin
 				.ycoord(point.getY())
 				.plane(point.getPlane())
 				.discovered_time(Instant.now())
+				.npcId(npcId)
 				.npcIndex(npcIndex)
 				.rsn(client.getLocalPlayer().getName())
 				.build();

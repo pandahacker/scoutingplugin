@@ -64,6 +64,8 @@ public enum SupportedEventsEnum {
         npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_YELLOW_12533, RITUAL);
         npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_BLUE_12534, RITUAL);
         npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_RED_12535, RITUAL);
+
+//        npcIdToEventMap.put(NpcID.WOODCUTTING_LEPRECHAUN, LEPRECHAUN);
     }
 
     public static SupportedEventsEnum findByNpcId(int npcId) {
