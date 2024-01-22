@@ -17,11 +17,19 @@ public enum SupportedEventsEnum {
     FOX,
     PHEASANT,
     BEEHIVE,
-    RITUAL;
+    RITUAL,
+    LEPRECHAUN,
+    ROOTS,
+    SAPLING,
+    FLOWERS
+    ;
 
     private static final Map<Integer, SupportedEventsEnum> npcIdToEventMap;
+    private static final Map<Integer, SupportedEventsEnum> objectIdToEventMap;
+
     static {
         npcIdToEventMap = new HashMap<>();
+        objectIdToEventMap = new HashMap<>();
 
         // Omitting PRUNED_ENTLING_12544 because it only signals the end of an event
         npcIdToEventMap.put(NpcID.ENTLING, ENT);
@@ -39,6 +47,8 @@ public enum SupportedEventsEnum {
         // PHEASANT_12547 and PHEASANT_12549 are pets, not events!
         npcIdToEventMap.put(NpcID.FREAKY_FORESTER_12536, PHEASANT);
         npcIdToEventMap.put(NpcID.PHEASANT_12537, PHEASANT);
+        objectIdToEventMap.put(ObjectID.PHEASANT_NEST, PHEASANT);
+        objectIdToEventMap.put(ObjectID.PHEASANT_NEST_49937, PHEASANT);
 
         // Omitting FRIENDLY_BEES which also spawn during flowering bush event
         npcIdToEventMap.put(NpcID.BEE_KEEPER_12514, BEEHIVE);
@@ -65,11 +75,41 @@ public enum SupportedEventsEnum {
         npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_BLUE_12534, RITUAL);
         npcIdToEventMap.put(NpcID.RITUAL_CIRCLE_RED_12535, RITUAL);
 
-//        npcIdToEventMap.put(NpcID.WOODCUTTING_LEPRECHAUN, LEPRECHAUN);
+        npcIdToEventMap.put(NpcID.WOODCUTTING_LEPRECHAUN, LEPRECHAUN);
+
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_LILAC, FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_PINK, FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_RED, FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_ORANGE, FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_YELLOW, FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_WHITE , FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_GREEN, FLOWERS);
+        npcIdToEventMap.put(NpcID.FLOWERING_BUSH_BLUE, FLOWERS);
+
+        objectIdToEventMap.put(ObjectID.TREE_ROOTS, ROOTS);
+        objectIdToEventMap.put(ObjectID.ANIMAINFUSED_TREE_ROOTS, ROOTS);
+
+        objectIdToEventMap.put(ObjectID.STRUGGLING_SAPLING, SAPLING);
+        objectIdToEventMap.put(ObjectID.STRUGGLING_SAPLING_47485, SAPLING);
+        objectIdToEventMap.put(ObjectID.STRUGGLING_SAPLING_47487, SAPLING);
+        objectIdToEventMap.put(ObjectID.STRUGGLING_SAPLING_47488, SAPLING);
+        objectIdToEventMap.put(ObjectID.STRUGGLING_SAPLING_47490, SAPLING);
+        objectIdToEventMap.put(ObjectID.STRUGGLING_SAPLING_47491, SAPLING);
+        objectIdToEventMap.put(ObjectID.ROTTING_LEAVES, SAPLING);
+        objectIdToEventMap.put(ObjectID.GREEN_LEAVES, SAPLING);
+        objectIdToEventMap.put(ObjectID.DROPPINGS, SAPLING);
+        objectIdToEventMap.put(ObjectID.WILD_MUSHROOMS, SAPLING);
+        objectIdToEventMap.put(ObjectID.WILD_MUSHROOMS_47497, SAPLING);
+        objectIdToEventMap.put(ObjectID.WILD_MUSHROOMS_47498, SAPLING);
+        objectIdToEventMap.put(ObjectID.SPLINTERED_BARK, SAPLING);
     }
 
     public static SupportedEventsEnum findByNpcId(int npcId) {
         return npcIdToEventMap.get(npcId);
+    }
+
+    public static SupportedEventsEnum findByObjectId(int objectId) {
+        return objectIdToEventMap.get(objectId);
     }
 
 }

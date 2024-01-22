@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -48,10 +49,24 @@ public class ScoutingPlugin extends Plugin
 	List<EventData> recentEvents = new ArrayList<>();
 
 	@Subscribe
+	public void onGameObjectSpawned(final GameObjectSpawned event) {
+		GameObject gameObject = event.getGameObject();
+
+		SupportedEventsEnum eventType = SupportedEventsEnum.findByObjectId(gameObject.getId());
+
+		eventSpawned(eventType, gameObject.getWorldLocation(), gameObject.getId(), null);
+	}
+
+	@Subscribe
 	public void onNpcSpawned(NpcSpawned npcSpawned) {
 		final NPC npc = npcSpawned.getNpc();
 
 		SupportedEventsEnum eventType = SupportedEventsEnum.findByNpcId(npc.getId());
+
+		eventSpawned(eventType, npc.getWorldArea().toWorldPoint(), npc.getId(), npc.getIndex());
+	}
+
+	private void eventSpawned(SupportedEventsEnum eventType, WorldPoint location, Integer id, Integer npcIndex) {
 		if (eventType == null) {
 			// event not found for this NPC
 			return;
@@ -60,7 +75,7 @@ public class ScoutingPlugin extends Plugin
 		if (!clientOptedIntoEventType(eventType))
 			return;
 
-		EventData event = makeEvent(eventType, npc.getWorldArea(), npc.getId(), npc.getIndex());
+		EventData event = makeEvent(eventType, location, id, null);
 
 		// remove any stale events, since events older than the dedupe duration could never match any new events anyway.
 		recentEvents.removeIf(e -> Math.abs(e.getDiscovered_time().getEpochSecond() - Instant.now().getEpochSecond())
@@ -72,17 +87,16 @@ public class ScoutingPlugin extends Plugin
 		}
 	}
 
-	private EventData makeEvent(SupportedEventsEnum eventType, WorldArea eventLocation, Integer npcId, Integer npcIndex) {
+	private EventData makeEvent(SupportedEventsEnum eventType, WorldPoint eventLocation, int id, Integer npcIndex) {
 		int world = client.getWorld();
-		WorldPoint point = eventLocation.toWorldPoint();
 		return EventData.builder()
 				.eventType(eventType.name())
 				.world(world)
-				.xcoord(point.getX())
-				.ycoord(point.getY())
-				.plane(point.getPlane())
+				.xcoord(eventLocation.getX())
+				.ycoord(eventLocation.getY())
+				.plane(eventLocation.getPlane())
 				.discovered_time(Instant.now())
-				.npcId(npcId)
+				.npcId(id)
 				.npcIndex(npcIndex)
 				.rsn(client.getLocalPlayer().getName())
 				.build();
@@ -90,21 +104,20 @@ public class ScoutingPlugin extends Plugin
 
 	// Only send events if the client is interested in contributing to scouting this event type
 	private boolean clientOptedIntoEventType(SupportedEventsEnum eventType) {
-		if (eventType == SupportedEventsEnum.ENT) {
-			return config.entEnabled();
+		if (eventType == SupportedEventsEnum.ENT
+				|| eventType == SupportedEventsEnum.PHEASANT
+				|| eventType == SupportedEventsEnum.FOX
+				|| eventType == SupportedEventsEnum.BEEHIVE
+				|| eventType == SupportedEventsEnum.RITUAL
+				|| eventType == SupportedEventsEnum.LEPRECHAUN
+				|| eventType == SupportedEventsEnum.ROOTS
+				|| eventType == SupportedEventsEnum.SAPLING
+				|| eventType == SupportedEventsEnum.FLOWERS
+		) {
+			return config.forestryEventsEnabled();
 		}
-		if (eventType == SupportedEventsEnum.FOX) {
-			return config.foxEnabled();
-		}
-		if (eventType == SupportedEventsEnum.PHEASANT) {
-			return config.pheasantEnabled();
-		}
-		if (eventType == SupportedEventsEnum.BEEHIVE) {
-			return config.beehiveEnabled();
-		}
-		if (eventType == SupportedEventsEnum.RITUAL) {
-			return config.ritualEnabled();
-		}
+
+		// Future event types go here.
 
 		return false;
 	}
