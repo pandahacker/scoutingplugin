@@ -25,7 +25,7 @@ public interface ScoutingConfig extends Config
 			section = infoSection
 	)
 	default String discordLink() {
-		return "https://discord.gg/loghunters";
+		return "https://discord.gg/pandahacker";
 	}
 
 	@ConfigSection(

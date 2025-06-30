@@ -24,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Event Scouting"
+	name = "Imp Scouting"
 )
 public class ScoutingPlugin extends Plugin
 {
@@ -105,14 +105,14 @@ public class ScoutingPlugin extends Plugin
 	// Only send events if the client is interested in contributing to scouting this event type
 	private boolean clientOptedIntoEventType(SupportedEventsEnum eventType) {
 		if (eventType == SupportedEventsEnum.ENT
-				|| eventType == SupportedEventsEnum.PHEASANT
-				|| eventType == SupportedEventsEnum.FOX
-				|| eventType == SupportedEventsEnum.BEEHIVE
-				|| eventType == SupportedEventsEnum.RITUAL
-				|| eventType == SupportedEventsEnum.LEPRECHAUN
+//				|| eventType == SupportedEventsEnum.PHEASANT
+//				|| eventType == SupportedEventsEnum.FOX
+//				|| eventType == SupportedEventsEnum.BEEHIVE
+//				|| eventType == SupportedEventsEnum.RITUAL
+//				|| eventType == SupportedEventsEnum.LEPRECHAUN
 				|| eventType == SupportedEventsEnum.ROOTS
-				|| eventType == SupportedEventsEnum.SAPLING
-				|| eventType == SupportedEventsEnum.FLOWERS
+//				|| eventType == SupportedEventsEnum.SAPLING
+				|| eventType == SupportedEventsEnum.IMP
 		) {
 			return config.forestryEventsEnabled();
 		}
